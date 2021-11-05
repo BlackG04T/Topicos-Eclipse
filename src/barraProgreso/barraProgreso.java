@@ -1,7 +1,7 @@
 package barraProgreso;
 
 import java.awt.EventQueue;
-
+import java.lang.Thread;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -59,28 +59,35 @@ public class barraProgreso extends JFrame {
 		btnIniciar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			     try {
-			    	 if(!flagReiniciar) {
-			         for(int i = 0; i <= 100; i++) {
-			        	 Thread.sleep(500);
-			             i += 10;
-			             pgbBarra.setValue(i);
-			         }
-			         flagReiniciar = true;
-			         lblFinalizado.setText("BUCLE FINALIZADO");
-			         return;
-			    	 }
-			         if(flagReiniciar) {
-			        	 pgbBarra.setValue(0);
-			        	 flagReiniciar = false;
-			        	 lblFinalizado.setText(" ");
-			        	 return;
-			         }
-			        	 
-			     }
-			     catch (Exception ex) {
-			         System.err.println( ex.getMessage() );
-			     }
+				
+				Thread unHilo = new Thread() {
+					public void run() {
+						 for(int i = 0; i <= 100; i++) {
+				        	 try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+				             i += 10;
+				             pgbBarra.setValue(i);
+				         }
+						 lblFinalizado.setText("BUCLE FINALIZADO");
+					}
+				};
+				
+				if(!flagReiniciar) {
+					unHilo.start();
+					flagReiniciar = true;
+					return;
+				}
+				
+				if(flagReiniciar) {
+		        	 pgbBarra.setValue(0);
+		        	 flagReiniciar = false;
+		        	 lblFinalizado.setText(" ");
+		        	 return;
+		         }
+		
 			}
 		});
 		btnIniciar.setBounds(174, 11, 129, 37);
